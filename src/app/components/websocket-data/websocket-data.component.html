@@ -1,0 +1,14 @@
+<div>
+  <h2>Respostas do Llama3:</h2>
+  @if (flag) {
+  <p>carregando...</p>
+  }
+  <markdown ngPreserveWhitespaces [data]="teste"></markdown>
+
+  <form #myForm="ngForm" (ngSubmit)="getResponse()">
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" [(ngModel)]="prompt" required />
+
+    <button type="submit">Enviar</button>
+  </form>
+</div>
