@@ -1,0 +1,11 @@
+<div class="response flex justify-content-center" #scrollContainer>
+  <app-websocket-data [textResponse]="teste" [flag]="flag"></app-websocket-data>
+</div>
+
+<div class="flex justify-content-center w-12">
+  <app-input-chat
+    (emitResponse)="getResponse()"
+    (emitCancelRequest)="cancelRequest()"
+    [disabled]="disabled"
+  ></app-input-chat>
+</div>

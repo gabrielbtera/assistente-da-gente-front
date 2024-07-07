@@ -7,18 +7,16 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
-interface StreamResponse {
+interface Message {
+  role: string;
+  content: string;
+}
+
+interface Response {
   model: string;
-  created_at: string;
-  response: string;
+  created_at: string; // Consider using Date if you plan to handle this as a date object
+  message: Message;
   done: boolean;
-  done_reason?: string;
-  context?: number[];
-  total_duration?: number;
-  load_duration?: number;
-  prompt_eval_duration?: number;
-  eval_count?: number;
-  eval_duration?: number;
 }
 
 interface RequestData {
@@ -37,24 +35,17 @@ interface RequestData {
   providedIn: 'root',
 })
 export class WebsocketService {
-  private url = 'http://localhost:11435/api';
+  private url = 'http://localhost:8000';
+
+  flagSpinner = false;
+
+  response = '';
 
   constructor(private http: HttpClient) {}
 
   getStreamData(prompt: string): Observable<any> {
-    const endpoint = this.url + '/generate';
-    const body = {
-      model: 'llama3',
-      prompt: prompt,
-      stream: true,
-      options: {
-        seed: 200,
-        top_k: 20,
-        top_p: 0.9,
-        temperature: 0,
-      },
-    };
-
+    const endpoint = this.url;
+    const body = { prompt, parametro: 0 };
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -69,26 +60,28 @@ export class WebsocketService {
       .pipe(map((event) => this.obterDadosDoEvento(event)));
   }
 
-  private obterDadosDoEvento(event: any): string | void {
-    console.log(event);
+  private obterDadosDoEvento(event: any): string | void | boolean {
     switch (event.type) {
       case HttpEventType.Sent:
         console.log('Requisição enviada!');
         return '';
       case HttpEventType.DownloadProgress:
-        console.log('evento', event);
         const objetosSeparados = event.partialText.trim().split('\n');
         const objeto = objetosSeparados[objetosSeparados.length - 1];
-        const objetosJson = JSON.parse(objeto) as StreamResponse;
 
-        if (!objetosJson.done) return objetosJson.response;
+        const objetosJson = JSON.parse(objeto) as Response;
+
+        if (!objetosJson.done) {
+          this.response += objetosJson.message.content;
+          return objetosJson.message.content;
+        }
         return;
       case HttpEventType.ResponseHeader:
         console.log('Cabeçalhos da resposta recebidos!');
         return;
       case HttpEventType.Response:
         console.log('Resposta recebida completamente!', event.body);
-        return;
+        return true;
       default:
         return;
     }

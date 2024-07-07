@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { WebsocketService } from '../../services/websocket.service';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { MarkdownModule } from 'ngx-markdown';
+
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { InputGroupModule } from 'primeng/inputgroup';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,26 +14,20 @@ import { CommonModule } from '@angular/common';
   templateUrl: './websocket-data.component.html',
   styleUrls: ['./websocket-data.component.css'],
   standalone: true,
-  imports: [FormsModule, MarkdownModule, CommonModule],
+  imports: [
+    FormsModule,
+    MarkdownModule,
+    CommonModule,
+    ButtonModule,
+    InputTextModule,
+    ProgressSpinnerModule,
+    InputGroupModule,
+  ],
   providers: [],
 })
-export class WebsocketDataComponent implements OnInit {
-  responseStream: string[] = [];
-  prompt: string = '';
+export class WebsocketDataComponent {
+  @Input() flag: boolean = false;
+  @Input() textResponse = '';
 
-  teste = '';
-  flag = false;
-
-  constructor(private llamaService: WebsocketService) {}
-
-  ngOnInit(): void {}
-
-  getResponse() {
-    this.teste = '';
-    this.flag = true;
-    this.llamaService.getStreamData(this.prompt).subscribe((response) => {
-      if (response) this.teste += response;
-      this.flag = false;
-    });
-  }
+  @Output() scroll: EventEmitter<void> = new EventEmitter<void>();
 }

@@ -1,0 +1,23 @@
+<div class="inputs">
+  <p-inputGroup>
+    <input
+      type="text"
+      pInputText
+      id="nome"
+      name="nome"
+      [(ngModel)]="prompt"
+      placeholder="Faça-me uma pergunta"
+      required
+    />
+
+    @if (disabled ) {
+    <button pButton (click)="cancelRequest()" icon="pi pi-stop-circle"></button
+    >} @else {
+    <button
+      (click)="getResponse()"
+      pButton
+      icon="pi pi-arrow-circle-up"
+    ></button>
+    }
+  </p-inputGroup>
+</div>

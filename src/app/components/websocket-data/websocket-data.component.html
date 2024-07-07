@@ -1,14 +1,21 @@
-<div>
-  <h2>Respostas do Llama3:</h2>
+<div class="output">
   @if (flag) {
-  <p>carregando...</p>
+  <div class="flex flex-row align-items-center">
+    <p-progressSpinner
+      strokeWidth="4"
+      styleClass="w-2rem h-2rem"
+      ariaLabel="loading"
+    />
+    <p class="ml-3">Um momentinho...</p>
+  </div>
+
   }
-  <markdown ngPreserveWhitespaces [data]="teste"></markdown>
-
-  <form #myForm="ngForm" (ngSubmit)="getResponse()">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" [(ngModel)]="prompt" required />
-
-    <button type="submit">Enviar</button>
-  </form>
+  <div>
+    <markdown
+      style="font-size: 14px"
+      ngPreserveWhitespaces
+      [data]="textResponse"
+    >
+    </markdown>
+  </div>
 </div>

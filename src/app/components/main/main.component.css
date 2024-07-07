@@ -1,4 +1,4 @@
 .response {
   overflow-y: scroll;
-  height: calc(95vh - 10px);
+  height: calc(90vh - 25px);
 }
