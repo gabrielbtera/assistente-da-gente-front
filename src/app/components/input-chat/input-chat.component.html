@@ -15,6 +15,7 @@
     >} @else {
     <button
       (click)="getResponse()"
+      [disabled]="!prompt"
       pButton
       icon="pi pi-arrow-circle-up"
     ></button>

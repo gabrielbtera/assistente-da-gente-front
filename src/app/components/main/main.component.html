@@ -1,8 +1,20 @@
 <div class="response flex justify-content-center" #scrollContainer>
-  <app-response-chat
-    [textResponse]="outputChat"
-    [flag]="flag"
-  ></app-response-chat>
+  <div class="history">
+    @for (question of historyChat; track $index) {
+    <div class="flex justify-content-end">
+      <p-chip
+        class="max-w-40rem"
+        [label]="question.prompt"
+        styleClass="p-2"
+      ></p-chip>
+    </div>
+
+    <app-response-chat
+      [textResponse]="question.outputChat"
+      [flag]="question.flagLoading"
+    ></app-response-chat>
+    }
+  </div>
 </div>
 
 <div class="flex justify-content-center w-12">

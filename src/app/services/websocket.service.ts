@@ -80,7 +80,7 @@ export class WebsocketService {
         console.log('Cabeçalhos da resposta recebidos!');
         return;
       case HttpEventType.Response:
-        console.log('Resposta recebida completamente!', event.body);
+        console.log('Resposta recebida completamente!');
         return true;
       default:
         return;
