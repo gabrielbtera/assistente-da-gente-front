@@ -18,7 +18,7 @@ export class MainComponent {
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef;
   @ViewChild(InputChatComponent) filhoComponent!: InputChatComponent;
 
-  teste = '';
+  outputChat = '';
   flag = false;
   disabled = false;
 
@@ -33,8 +33,7 @@ export class MainComponent {
   }
 
   getResponse() {
-    console.log(this.filhoComponent.prompt);
-    this.teste = '';
+    this.outputChat = '';
     this.flag = true;
     this.disabled = true;
     this.llamaService
@@ -42,7 +41,7 @@ export class MainComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((response) => {
         if (response && typeof response !== 'boolean') {
-          this.teste += response;
+          this.outputChat += response;
           this.flag = false;
           this.scrollToBottom();
         } else if (typeof response === 'boolean') {
