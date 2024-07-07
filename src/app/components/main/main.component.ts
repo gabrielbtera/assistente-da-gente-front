@@ -1,13 +1,13 @@
-import { Component, ContentChild, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
-import { WebsocketDataComponent } from '../websocket-data/websocket-data.component';
 import { InputChatComponent } from '../input-chat/input-chat.component';
+import { ResponseChatComponent } from '../response-chat/response-chat.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [WebsocketDataComponent, InputChatComponent],
+  imports: [ResponseChatComponent, InputChatComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',
 })

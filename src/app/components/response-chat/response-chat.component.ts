@@ -10,9 +10,9 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-websocket-data',
-  templateUrl: './websocket-data.component.html',
-  styleUrls: ['./websocket-data.component.css'],
+  selector: 'app-response-chat',
+  templateUrl: './response-chat.component.html',
+  styleUrls: ['./response-chat.component.css'],
   standalone: true,
   imports: [
     FormsModule,
@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
   ],
   providers: [],
 })
-export class WebsocketDataComponent {
+export class ResponseChatComponent {
   @Input() flag: boolean = false;
   @Input() textResponse = '';
 
