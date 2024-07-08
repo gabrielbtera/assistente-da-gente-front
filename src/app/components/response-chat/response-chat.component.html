@@ -11,11 +11,20 @@
 
   }
   <div class="pb-4">
+    @if (flagError) {
+    <p-messages severity="error">
+      <ng-template pTemplate>
+        <div class="ml-2">{{ msg }}</div>
+      </ng-template>
+    </p-messages>
+
+    } @else {
     <markdown
       style="font-size: 14px; color: #4c566a"
       ngPreserveWhitespaces
       [data]="textResponse"
     >
     </markdown>
+    }
   </div>
 </div>

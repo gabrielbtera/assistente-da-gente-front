@@ -9,6 +9,7 @@ type History = {
   prompt: string;
   outputChat: string;
   flagLoading: boolean;
+  flagError?: boolean;
 };
 
 @Component({
@@ -56,16 +57,29 @@ export class MainComponent {
     this.llamaService
       .getStreamData(this.prompt)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((response) => {
-        if (response && typeof response !== 'boolean') {
-          this.updateCurrentPrompt(response);
-          this.flag = false;
-        } else if (typeof response === 'boolean') {
-          this.disabled = false;
-          console.log(this.historyChat);
-        }
+      .subscribe({
+        next: (response) => {
+          if (response && typeof response !== 'boolean') {
+            this.updateCurrentPrompt(response);
+            this.flag = false;
+          } else if (typeof response === 'boolean') {
+            this.disabled = false;
+            console.log(this.historyChat);
+          }
 
-        this.scrollToBottom();
+          this.scrollToBottom();
+        },
+        error: (err) => {
+          this.stopLoading();
+          this.filhoComponent.prompt = this.prompt;
+          this.updateCurrentPrompt(
+            'Econteceu um problema no nosso servico, tente novamente!',
+            true
+          );
+          this.disabled = false;
+          console.log(err);
+          console.log('error');
+        },
       });
   }
 
@@ -92,12 +106,16 @@ export class MainComponent {
     }
   }
 
-  updateCurrentPrompt(chunk: string) {
+  updateCurrentPrompt(chunk: string, flagError = false) {
     const size = this.historyChat.length;
     const element = this.historyChat[size - 1];
     const outputChat = element.outputChat + chunk;
     element.outputChat = outputChat;
     element.flagLoading = false;
+
+    if (flagError) {
+      element.flagError = true;
+    }
 
     this.historyChat[size - 1] = element;
   }
