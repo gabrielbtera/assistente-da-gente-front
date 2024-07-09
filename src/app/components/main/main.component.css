@@ -1,6 +1,6 @@
 .response {
   overflow-y: scroll;
-  height: calc(90vh - 25px);
+  height: calc(85vh - 25px);
 }
 
 .history {

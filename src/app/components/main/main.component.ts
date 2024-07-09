@@ -4,6 +4,7 @@ import { WebsocketService } from '../../services/websocket.service';
 import { InputChatComponent } from '../input-chat/input-chat.component';
 import { ResponseChatComponent } from '../response-chat/response-chat.component';
 import { ChipModule } from 'primeng/chip';
+import { SelecButtonComponent } from '../selec-button/selec-button.component';
 
 type History = {
   prompt: string;
@@ -15,7 +16,12 @@ type History = {
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [ResponseChatComponent, InputChatComponent, ChipModule],
+  imports: [
+    ResponseChatComponent,
+    InputChatComponent,
+    ChipModule,
+    SelecButtonComponent,
+  ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',
 })
@@ -32,6 +38,8 @@ export class MainComponent {
   disabled = false;
 
   private destroy$ = new Subject<void>();
+
+  private optionRequest = false;
 
   constructor(private llamaService: WebsocketService) {}
 
@@ -54,8 +62,11 @@ export class MainComponent {
     this.filhoComponent.prompt = '';
 
     this.disabled = true;
+
+    console.log(this.optionRequest);
+
     this.llamaService
-      .getStreamData(this.prompt)
+      .getStreamData(this.prompt, this.optionRequest)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -64,7 +75,6 @@ export class MainComponent {
             this.flag = false;
           } else if (typeof response === 'boolean') {
             this.disabled = false;
-            console.log(this.historyChat);
           }
 
           this.scrollToBottom();
@@ -118,5 +128,13 @@ export class MainComponent {
     }
 
     this.historyChat[size - 1] = element;
+  }
+
+  getoOptionLLM(event: string) {
+    if (event === 'L') {
+      this.optionRequest = false;
+    } else {
+      this.optionRequest = true;
+    }
   }
 }

@@ -1,3 +1,7 @@
+<div class="flex justify-content-center mb-4">
+  <app-selec-button (valueChanged)="getoOptionLLM($event)"></app-selec-button>
+</div>
+
 <div class="response flex justify-content-center" #scrollContainer>
   <div class="history">
     @for (question of historyChat; track $index) {

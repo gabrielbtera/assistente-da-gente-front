@@ -19,6 +19,10 @@ interface Response {
   done: boolean;
 }
 
+interface ResponseGemini {
+  response: string;
+}
+
 interface RequestData {
   model: string;
   prompt: string;
@@ -43,7 +47,7 @@ export class WebsocketService {
 
   constructor(private http: HttpClient) {}
 
-  getStreamData(prompt: string): Observable<any> {
+  getStreamData(prompt: string, isGemini = false): Observable<any> {
     const endpoint = this.url;
     const body = { prompt, parametro: 0 };
     const httpOptions = {
@@ -55,9 +59,43 @@ export class WebsocketService {
       observe: 'events' as 'events',
     };
 
+    if (isGemini) {
+      const endpoint = this.url + '/gemini';
+      return this.http
+        .post(endpoint, body, httpOptions)
+        .pipe(map((event) => this.getDataGemini(event)));
+    }
+
     return this.http
       .post(endpoint, body, httpOptions)
       .pipe(map((event) => this.obterDadosDoEvento(event)));
+  }
+
+  getDataGemini(event: any) {
+    switch (event.type) {
+      case HttpEventType.Sent:
+        console.log('Requisição enviada!');
+        return '';
+      case HttpEventType.DownloadProgress:
+        const objetosSeparados = event.partialText.trim().split('\n');
+        const objeto = objetosSeparados[objetosSeparados.length - 1];
+
+        const objetosJson = JSON.parse(objeto) as any;
+
+        if (objetosJson) {
+          this.response += objetosJson.response;
+          return objetosJson.response;
+        }
+        return;
+      case HttpEventType.ResponseHeader:
+        console.log('Cabeçalhos da resposta recebidos!');
+        return;
+      case HttpEventType.Response:
+        console.log('Resposta recebida completamente!');
+        return true;
+      default:
+        return;
+    }
   }
 
   private obterDadosDoEvento(event: any): string | void | boolean {
