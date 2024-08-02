@@ -1,10 +1,15 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
+
 import { WebsocketService } from '../../services/websocket.service';
 import { InputChatComponent } from '../input-chat/input-chat.component';
 import { ResponseChatComponent } from '../response-chat/response-chat.component';
+
 import { ChipModule } from 'primeng/chip';
 import { SelecButtonComponent } from '../selec-button/selec-button.component';
+
+import { stripMarkdown } from '../../shared/utils/filter-markdown';
+import { SpeechUtils } from '../../shared/utils/speech-to-text';
 
 type History = {
   prompt: string;
@@ -63,8 +68,6 @@ export class MainComponent {
 
     this.disabled = true;
 
-    console.log(this.optionRequest);
-
     this.llamaService
       .getStreamData(this.prompt, this.optionRequest)
       .pipe(takeUntil(this.destroy$))
@@ -75,6 +78,7 @@ export class MainComponent {
             this.flag = false;
           } else if (typeof response === 'boolean') {
             this.disabled = false;
+            this.speak();
           }
 
           this.scrollToBottom();
@@ -87,8 +91,7 @@ export class MainComponent {
             true
           );
           this.disabled = false;
-          console.log(err);
-          console.log('error');
+          console.error(err);
         },
       });
   }
@@ -136,5 +139,12 @@ export class MainComponent {
     } else {
       this.optionRequest = true;
     }
+  }
+
+  private speak() {
+    const currentResponse =
+      this.historyChat[this.historyChat.length - 1].outputChat;
+    const speech = new SpeechUtils();
+    speech.speak(stripMarkdown(currentResponse));
   }
 }
