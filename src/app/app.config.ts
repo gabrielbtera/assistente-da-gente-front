@@ -17,5 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(withFetch()),
     importProvidersFrom(MarkdownModule.forRoot()),
+    SpeechSynthesisUtterance,
   ],
 };

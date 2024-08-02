@@ -23,6 +23,7 @@
       style="font-size: 14px; color: #4c566a"
       ngPreserveWhitespaces
       [data]="textResponse"
+      [waTextToSpeech]="textResponse | waUtterance : options"
     >
     </markdown>
     }

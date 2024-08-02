@@ -1,10 +1,11 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, repeat, retry, takeUntil } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { InputChatComponent } from '../input-chat/input-chat.component';
 import { ResponseChatComponent } from '../response-chat/response-chat.component';
 import { ChipModule } from 'primeng/chip';
 import { SelecButtonComponent } from '../selec-button/selec-button.component';
+import { SpeechSynthesisModule } from '@ng-web-apis/speech';
 
 type History = {
   prompt: string;
@@ -21,6 +22,7 @@ type History = {
     InputChatComponent,
     ChipModule,
     SelecButtonComponent,
+    SpeechSynthesisModule,
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',
@@ -30,6 +32,8 @@ export class MainComponent {
 
   prompt: string = '';
 
+  talk: any;
+
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef;
   @ViewChild(InputChatComponent) filhoComponent!: InputChatComponent;
 
@@ -38,6 +42,8 @@ export class MainComponent {
   disabled = false;
 
   private destroy$ = new Subject<void>();
+
+  text = 'Seja bem vindo!';
 
   private optionRequest = false;
 
@@ -75,6 +81,9 @@ export class MainComponent {
             this.flag = false;
           } else if (typeof response === 'boolean') {
             this.disabled = false;
+            this.text =
+              this.historyChat[this.historyChat.length - 1].outputChat;
+            this.speak(this.text);
           }
 
           this.scrollToBottom();
@@ -136,5 +145,21 @@ export class MainComponent {
     } else {
       this.optionRequest = true;
     }
+  }
+
+  getTest() {
+    this
+      .speak(`O erro ReferenceError: SpeechSynthesisUtterance is not defined sugere que o objeto SpeechSynthesisUtterance não está disponível no contexto onde está sendo utilizado. Isso geralmente ocorre quando o código é executado em um ambiente onde a API de Web Speech não está presente, como durante a construção do aplicativo no lado do servidor.
+
+Aqui está uma abordagem para resolver esse problema, garantindo que a API só seja utilizada no ambiente do navegador:`);
+  }
+
+  speak(text: string) {
+    var utterThis = new SpeechSynthesisUtterance(text);
+
+    this.talk = utterThis;
+  }
+  error(event: any) {
+    console.log(event);
   }
 }
