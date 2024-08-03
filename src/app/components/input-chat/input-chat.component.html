@@ -1,7 +1,15 @@
-@if ( speaking ) {<p-progressBar
-  mode="indeterminate"
-  [style]="{ height: '2px' }"
-/>}
+@if ( speaking$ | async ) {
+<div class="flex justify-content-center align-items-center flex-row">
+  <app-animate-audio class="mr-1" />
+
+  <p-button
+    icon="pi pi-pause-circle"
+    label="Parar Fala"
+    styleClass="p-button-text p-button-sm"
+    (onClick)="cancelSpeech()"
+  ></p-button>
+</div>
+}
 
 <div class="inputs">
   <p-inputGroup>

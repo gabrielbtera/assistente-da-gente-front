@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { WebsocketService } from '../../services/websocket.service';
 import { InputChatComponent } from '../input-chat/input-chat.component';
@@ -35,7 +35,7 @@ type History = {
 export class MainComponent {
   historyChat: History[] = [];
 
-  speaking = false;
+  speaking$ = new Observable<boolean>();
 
   prompt: string = '';
 
@@ -150,5 +150,10 @@ export class MainComponent {
       this.historyChat[this.historyChat.length - 1].outputChat;
     const speech = new SpeechUtils();
     speech.speak(stripMarkdown(currentResponse));
+    this.speaking$ = speech.getSpeakingState();
+  }
+
+  cancelSpeech() {
+    new SpeechUtils().cancelSpeech();
   }
 }

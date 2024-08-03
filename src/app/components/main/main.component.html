@@ -36,5 +36,7 @@
     (emitResponse)="getResponse()"
     (emitCancelRequest)="cancelRequest()"
     [disabled]="disabled"
+    [speaking$]="speaking$"
+    (emitCancelSpeech)="cancelSpeech()"
   ></app-input-chat>
 </div>

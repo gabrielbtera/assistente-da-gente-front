@@ -7,6 +7,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { AnimateAudioComponent } from '../../shared/components/animate-audio/animate-audio.component';
 
 @Component({
   selector: 'app-input-chat',
@@ -19,6 +21,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
     ProgressSpinnerModule,
     InputGroupModule,
     ProgressBarModule,
+    AnimateAudioComponent,
   ],
   templateUrl: './input-chat.component.html',
   styleUrl: './input-chat.component.css',
@@ -27,9 +30,13 @@ export class InputChatComponent {
   responseStream: string[] = [];
   prompt: string = '';
   @Input() speaking = false;
+
+  @Input() speaking$ = new Observable<boolean>();
   @Input() disabled: boolean = false;
   @Output() emitResponse = new EventEmitter<string>();
   @Output() emitCancelRequest = new EventEmitter<void>();
+
+  @Output() emitCancelSpeech = new EventEmitter<void>();
 
   getResponse() {
     this.emitResponse.emit();
@@ -37,5 +44,13 @@ export class InputChatComponent {
 
   cancelRequest() {
     this.emitCancelRequest.emit();
+  }
+
+  cancelSpeech() {
+    const speakingSubject: BehaviorSubject<boolean> =
+      new BehaviorSubject<boolean>(false);
+
+    this.speaking$ = speakingSubject.asObservable();
+    this.emitCancelSpeech.emit();
   }
 }

@@ -1,9 +1,13 @@
+import { BehaviorSubject, Observable } from 'rxjs';
+
 export class SpeechUtils {
   private static isBrowser: boolean = typeof window !== 'undefined';
   private static resumeTimeoutId?: any;
-  public static resumeFlag: boolean = true;
+  private static resumeFlag: boolean = true;
 
-  public utterance!: SpeechSynthesisUtterance;
+  public isSpeaking$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
 
   /**
    * Fala o texto fornecido.
@@ -11,7 +15,7 @@ export class SpeechUtils {
    */
   public speak(text: string): void {
     if (SpeechUtils.isBrowser && 'speechSynthesis' in window) {
-      SpeechUtils.cancel(); // Cancela qualquer fala anterior
+      this.cancel(); // Cancela qualquer fala anterior
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.volume = 0.8;
@@ -20,11 +24,13 @@ export class SpeechUtils {
       utterance.lang = 'pt-BR'; // Define o idioma como português do Brasil
 
       utterance.onstart = () => {
-        SpeechUtils.startResumeInfinity();
+        this.isSpeaking$.next(true);
+        this.startResumeInfinity();
       };
 
       utterance.onend = () => {
-        SpeechUtils.stopResumeInfinity();
+        this.isSpeaking$.next(false);
+        this.stopResumeInfinity();
       };
 
       window.speechSynthesis.speak(utterance);
@@ -36,7 +42,7 @@ export class SpeechUtils {
   /**
    * Cancela qualquer fala em andamento.
    */
-  public static cancel(): void {
+  public cancel(): void {
     if (SpeechUtils.isBrowser && 'speechSynthesis' in window) {
       if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
         window.speechSynthesis.cancel();
@@ -47,31 +53,45 @@ export class SpeechUtils {
   /**
    * Inicia a função de pausa e retomada infinita.
    */
-  private static startResumeInfinity(): void {
+  private startResumeInfinity(): void {
     SpeechUtils.resumeFlag = true;
-    SpeechUtils.resumeTimeoutId = setTimeout(SpeechUtils.resumeSpeech, 2000);
+    SpeechUtils.resumeTimeoutId = setTimeout(() => this.resumeSpeech(), 2000);
   }
 
   /**
    * Retoma a fala a cada 2 segundos.
    */
-  private static resumeSpeech(): void {
+  private resumeSpeech(): void {
     if (SpeechUtils.resumeFlag) {
       window.speechSynthesis.pause();
       window.speechSynthesis.resume();
-      SpeechUtils.resumeTimeoutId = setTimeout(SpeechUtils.resumeSpeech, 2000);
+      SpeechUtils.resumeTimeoutId = setTimeout(() => this.resumeSpeech(), 2000);
     }
   }
 
   /**
    * Para a função de pausa e retomada e limpa o timeout.
    */
-  private static stopResumeInfinity(): void {
+  private stopResumeInfinity(): void {
     console.log('Fala finalizou');
     window.speechSynthesis.cancel();
     SpeechUtils.resumeFlag = false;
     if (SpeechUtils.resumeTimeoutId) {
       clearTimeout(SpeechUtils.resumeTimeoutId);
     }
+  }
+
+  /**
+   * Método para acessar o estado de fala como um Observable.
+   * @returns Observable<boolean>
+   */
+  public getSpeakingState(): Observable<boolean> {
+    return this.isSpeaking$.asObservable();
+  }
+
+  public cancelSpeech(): void {
+    this.cancel();
+    this.isSpeaking$.next(false);
+    this.stopResumeInfinity();
   }
 }
