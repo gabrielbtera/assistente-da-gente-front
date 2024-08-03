@@ -18,6 +18,15 @@
       [flag]="question.flagLoading"
       [flagError]="question.flagError"
     ></app-response-chat>
+    } @if (disabled) {
+    <div>
+      <p-skeleton styleClass="mb-2" />
+      <p-skeleton width="20rem" styleClass="mb-2" />
+      <p-skeleton width="10rem" styleClass="mb-2" />
+      <p-skeleton styleClass="mb-2" />
+      <p-skeleton width="10rem" styleClass="mb-2" />
+      <p-skeleton styleClass="mb-2" />
+    </div>
     }
   </div>
 </div>

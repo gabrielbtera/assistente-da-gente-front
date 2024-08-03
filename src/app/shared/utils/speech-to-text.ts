@@ -1,7 +1,9 @@
 export class SpeechUtils {
   private static isBrowser: boolean = typeof window !== 'undefined';
   private static resumeTimeoutId?: any;
-  private static resumeFlag: boolean = true;
+  public static resumeFlag: boolean = true;
+
+  public utterance!: SpeechSynthesisUtterance;
 
   /**
    * Fala o texto fornecido.

@@ -10,6 +10,7 @@ import { SelecButtonComponent } from '../selec-button/selec-button.component';
 
 import { stripMarkdown } from '../../shared/utils/filter-markdown';
 import { SpeechUtils } from '../../shared/utils/speech-to-text';
+import { SkeletonModule } from 'primeng/skeleton';
 
 type History = {
   prompt: string;
@@ -26,12 +27,15 @@ type History = {
     InputChatComponent,
     ChipModule,
     SelecButtonComponent,
+    SkeletonModule,
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',
 })
 export class MainComponent {
   historyChat: History[] = [];
+
+  speaking = false;
 
   prompt: string = '';
 

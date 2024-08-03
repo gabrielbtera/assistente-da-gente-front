@@ -32,6 +32,7 @@ export function stripMarkdown(text: string): string {
 
   // Substituir "SEFAZ/SE" por "SEFAZ Sergipe"
   cleanText = cleanText.replace(/SEFAZ\/SE/g, 'SEFAZ Sergipe');
+  cleanText = cleanText.replace(/Sefaz\/SE/g, 'SEFAZ Sergipe');
 
   return cleanText.trim();
 }
